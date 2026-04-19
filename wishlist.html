@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wishlist - BookStore</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .wishlist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 30px;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body class="page-transition">
+
+  <nav class="navbar scrolled" id="navbar">
+    <div class="container nav-container">
+      <div class="logo">
+        <i class="fas fa-book-open"></i> BookStore
+      </div>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="books.html">Books</a></li>
+        <li><a href="wishlist.html" class="active">Wishlist</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="nav-icons">
+        <div class="cart-icon-wrapper">
+          <a href="cart.html"><i class="fas fa-shopping-cart"></i></a>
+          <span class="cart-badge" id="cart-count">0</span>
+        </div>
+        <div class="user-menu" id="user-menu">
+          <div class="user-avatar" id="avatar-initial">U</div>
+          <span class="user-name" id="navbar-user-name">User Name</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content container reveal">
+    <h1 style="margin-bottom: 10px; border-bottom: 2px solid var(--color-accent); padding-bottom:10px; display:inline-block;">My Wishlist</h1>
+    <p style="color:#666; margin-bottom: 30px;">Save your favorite books here to buy them later.</p>
+
+    <!-- Wishlist specific container for cards from cart.js render logic -->
+    <div id="wishlist-grid" class="wishlist-grid"></div>
+
+    <div id="wishlist-empty" style="display:none; text-align:center; padding: 80px 20px; background:white; border-radius:8px;">
+      <i class="fas fa-heart-broken" style="font-size:4rem; color:#ddd; margin-bottom:20px;"></i>
+      <h2>Your wishlist is empty</h2>
+      <p style="margin:15px 0; color:#666;">Explore our catalog to find your next great read.</p>
+      <a href="books.html" class="btn btn-primary ripple">Browse Books</a>
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="container footer-bottom">
+      <p>&copy; 2026 BookStore. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script src="js/auth.js"></script>
+  <script src="js/books.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Small timeout to ensure script relies are ready
+      setTimeout(() => {
+        if(typeof renderWishlistPage === 'function') {
+          renderWishlistPage();
+        }
+      }, 50);
+    });
+  </script>
+</body>
+</html>

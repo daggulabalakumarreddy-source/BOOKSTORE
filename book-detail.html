@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Detail - BookStore</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .detail-container {
+      display: flex;
+      gap: 50px;
+      margin-top: 40px;
+      background: white;
+      padding: 40px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-sm);
+    }
+    .detail-image {
+      flex: 0 0 350px;
+    }
+    .detail-image img {
+      width: 100%;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-md);
+    }
+    .detail-info {
+      flex: 1;
+    }
+    .detail-title {
+      font-size: 2.5rem;
+      color: var(--color-primary);
+      margin-bottom: 10px;
+    }
+    .detail-author {
+      font-size: 1.2rem;
+      color: #666;
+      margin-bottom: 20px;
+    }
+    .detail-badges {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .badge {
+      background: var(--color-bg);
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: var(--color-primary);
+      border: 1px solid var(--color-border);
+    }
+    .detail-price {
+      font-size: 2rem;
+      color: var(--color-accent);
+      font-weight: bold;
+      margin: 20px 0;
+    }
+    .detail-desc {
+      line-height: 1.8;
+      margin-bottom: 30px;
+      color: #444;
+    }
+    .detail-actions {
+      display: flex;
+      gap: 20px;
+    }
+    .detail-actions .btn {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+    }
+    
+    .related-books {
+      margin-top: 60px;
+    }
+
+    @media (max-width: 768px) {
+      .detail-container {
+        flex-direction: column;
+      }
+      .detail-image {
+        flex: none;
+        max-width: 300px;
+        margin: 0 auto;
+      }
+      .detail-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body class="page-transition">
+
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-container">
+      <div class="logo">
+        <i class="fas fa-book-open"></i> BookStore
+      </div>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="books.html" class="active">Books</a></li>
+        <li><a href="wishlist.html">Wishlist</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="nav-icons">
+        <div class="cart-icon-wrapper">
+          <a href="cart.html"><i class="fas fa-shopping-cart"></i></a>
+          <span class="cart-badge" id="cart-count">0</span>
+        </div>
+        <div class="user-menu" id="user-menu">
+          <div class="user-avatar" id="avatar-initial">U</div>
+          <span class="user-name" id="navbar-user-name">User Name</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content container reveal">
+    <a href="books.html" class="btn btn-outline" style="margin-bottom: 20px;"><i class="fas fa-arrow-left"></i> Back to Catalog</a>
+    
+    <div id="detail-wrapper">
+      <!-- Injected by JS -->
+      <div style="text-align:center; padding:50px;">Loading book details...</div>
+    </div>
+
+    <!-- Related Books -->
+    <div class="related-books reveal">
+      <div class="section-header">
+        <h2>Related Books</h2>
+      </div>
+      <div class="horizontal-scroll-container" id="related-container">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2026 BookStore. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/auth.js"></script>
+  <script src="js/books.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Parse URL param
+      const urlParams = new URLSearchParams(window.location.search);
+      const bookId = parseInt(urlParams.get('id'));
+      
+      if (!bookId || typeof booksDatabase === 'undefined') {
+        document.getElementById('detail-wrapper').innerHTML = `<h3>Book not found.</h3>`;
+        return;
+      }
+
+      const book = booksDatabase.find(b => b.id === bookId);
+      if (!book) {
+        document.getElementById('detail-wrapper').innerHTML = `<h3>Book not found.</h3>`;
+        return;
+      }
+
+      renderBookDetail(book);
+      renderRelatedBooks(book);
+    });
+
+    function renderBookDetail(book) {
+      const coverUrl = `https://covers.openlibrary.org/b/isbn/${book.isbn}-L.jpg`;
+      
+      let starsHtml = '';
+      for(let i=1; i<=5; i++) {
+        starsHtml += i <= book.rating 
+          ? '<i class="fas fa-star" style="color:#FFD700;"></i>' 
+          : '<i class="far fa-star" style="color:#ccc;"></i>';
+      }
+
+      // We'll generate a dummy description
+      const desc = `Dive into the mesmerizing world of <strong>${book.title}</strong> by ${book.author}. 
+                    This acclaimed ${book.genre} masterpiece has captivated millions of readers worldwide. 
+                    Whether you are an avid reader or just starting your journey, this book promises an unforgettable experience filled with emotion, depth, and brilliance.`;
+
+      // Check wishlist state 
+      let wishlistClass = '';
+      let wishlistText = 'Add to Wishlist';
+      try {
+        const list = JSON.parse(localStorage.getItem('bookstore_wishlist')) || [];
+        if (list.find(item => item.id === book.id)) {
+          wishlistClass = 'wishlist-active';
+          wishlistText = 'Added to Wishlist';
+        }
+      } catch(e) {}
+
+      document.getElementById('detail-wrapper').innerHTML = `
+        <div class="detail-container">
+          <div class="detail-image skeleton-box">
+             <img src="${coverUrl}" alt="${book.title}" onload="this.parentElement.classList.remove('skeleton-box')" onerror="this.src='https://via.placeholder.com/400x600?text=No+Cover'">
+          </div>
+          <div class="detail-info">
+            <h1 class="detail-title">${book.title}</h1>
+            <p class="detail-author">By ${book.author}</p>
+            
+            <div class="detail-badges">
+              <span class="badge">${book.genre}</span>
+              <span class="badge" style="background:transparent; border:none; padding:0;">${starsHtml}</span>
+            </div>
+            
+            <div class="detail-price">₹${book.price}</div>
+            
+            <div class="detail-desc">${desc}</div>
+            
+            <div class="detail-actions">
+              <button class="btn btn-primary ripple" onclick="addToCart(${book.id})">
+                <i class="fas fa-cart-plus"></i> Add to Cart
+              </button>
+              <button class="btn btn-outline ripple ${wishlistClass}" onclick="toggleWishlist(${book.id}, this); if(this.classList.contains('wishlist-active')){this.querySelector('span').innerText='Added to Wishlist'}else{this.querySelector('span').innerText='Add to Wishlist'}">
+                <i class="fas fa-heart"></i> <span>${wishlistText}</span>
+              </button>
+              <a href="https://openlibrary.org/isbn/${book.isbn}" target="_blank" class="btn btn-accent ripple" style="text-decoration:none;">
+                <i class="fas fa-book-reader"></i> Study Online
+              </a>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderRelatedBooks(book) {
+      const relatedContainer = document.getElementById('related-container');
+      const related = booksDatabase.filter(b => b.genre === book.genre && b.id !== book.id).slice(0, 4);
+      
+      if (related.length === 0) {
+        document.querySelector('.related-books').style.display = 'none';
+        return;
+      }
+      
+      related.forEach(b => {
+        relatedContainer.innerHTML += renderBookToGrid(b);
+      });
+    }
+  </script>
+</body>
+</html>

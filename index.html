@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home - BookStore</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Home Page Specific Styles */
+    
+    /* Hero Section */
+    .hero {
+      height: 90vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      background: linear-gradient(rgba(10, 15, 44, 0.8), rgba(10, 15, 44, 0.9)), 
+                  url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') center/cover fixed;
+      color: var(--color-text-light);
+      text-align: center;
+      margin-top: -80px; /* Offset nav */
+      padding-top: 80px;
+    }
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+      z-index: 2;
+    }
+    .hero h1 {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      color: var(--color-accent);
+    }
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      opacity: 0.9;
+    }
+
+    /* Section Styles */
+    section {
+      padding: 80px 0;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+    .section-header h2 {
+      font-size: 2.5rem;
+      position: relative;
+      display: inline-block;
+      padding-bottom: 10px;
+    }
+    .section-header h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background-color: var(--color-accent);
+    }
+
+    /* Featured Horizontal Scroll */
+    .horizontal-scroll-container {
+      display: flex;
+      overflow-x: auto;
+      gap: 20px;
+      padding: 20px 0;
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-accent) var(--color-bg);
+    }
+    .horizontal-scroll-container::-webkit-scrollbar {
+      height: 8px;
+    }
+    .horizontal-scroll-container::-webkit-scrollbar-thumb {
+      background-color: var(--color-accent);
+      border-radius: 4px;
+    }
+    
+    /* Global Book Card Style (used everywhere) */
+    .book-card {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 15px;
+      min-width: 220px;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--color-border);
+    }
+    .book-img-wrapper {
+      position: relative;
+      height: 250px;
+      margin-bottom: 15px;
+      overflow: hidden;
+      border-radius: 4px;
+    }
+    .book-img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .book-card:hover .book-img-wrapper img {
+      transform: scale(1.05);
+    }
+    .book-genre {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--color-accent);
+      color: var(--color-primary);
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-weight: bold;
+      z-index: 2;
+    }
+    .book-info h3 {
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+      color: var(--color-primary);
+    }
+    .book-author {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+    .book-bottom {
+      margin-top: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .book-price {
+      font-weight: bold;
+      color: var(--color-primary);
+      font-size: 1.1rem;
+    }
+    .book-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .book-actions button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: #ccc;
+      transition: color 0.3s ease;
+    }
+    .book-actions button:hover {
+      color: var(--color-accent);
+    }
+    .book-actions button.wishlist-active {
+      color: #e63946;
+    }
+
+    /* Categories Flip Cards */
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 30px;
+    }
+    .category-card {
+      background-color: transparent;
+      width: 100%;
+      height: 200px;
+      perspective: 1000px;
+    }
+    .category-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      cursor: pointer;
+    }
+    .category-card:hover .category-inner {
+      transform: rotateY(180deg);
+    }
+    .category-front, .category-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border-radius: var(--border-radius);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-shadow: var(--shadow-sm);
+    }
+    .category-front {
+      background-color: white;
+      color: var(--color-primary);
+      border: 1px solid var(--color-border);
+    }
+    .category-front i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: var(--color-accent);
+    }
+    .category-back {
+      background-color: var(--color-primary);
+      color: white;
+      transform: rotateY(180deg);
+    }
+
+    /* New Arrivals Grid (same as generic book grid) */
+    .book-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 30px;
+    }
+
+    /* Newsletter */
+    .newsletter-section {
+      background-color: var(--color-primary);
+      color: white;
+      text-align: center;
+      padding: 80px 20px;
+    }
+    .newsletter-form {
+      max-width: 500px;
+      margin: 30px auto 0;
+      display: flex;
+      gap: 10px;
+    }
+    .newsletter-form input {
+      flex: 1;
+      padding: 12px 15px;
+      border: none;
+      border-radius: 4px;
+      outline: none;
+    }
+    .newsletter-form button {
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="page-transition">
+
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-container">
+      <div class="logo">
+        <i class="fas fa-book-open"></i> BookStore
+      </div>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="books.html">Books</a></li>
+        <li><a href="wishlist.html">Wishlist</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="nav-icons">
+        <div class="cart-icon-wrapper">
+          <a href="cart.html"><i class="fas fa-shopping-cart"></i></a>
+          <span class="cart-badge" id="cart-count">0</span>
+        </div>
+        <div class="user-menu" id="user-menu">
+          <div class="user-avatar" id="avatar-initial">U</div>
+          <span class="user-name" id="navbar-user-name">User Name</span>
+          <div class="dropdown-menu">
+            <button onclick="window.location.href='cart.html'"><i class="fas fa-shopping-bag"></i> My Orders</button>
+            <button id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+          </div>
+        </div>
+        <button class="menu-toggle" id="menu-toggle"><i class="fas fa-bars"></i></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="container hero-content">
+      <h1 class="typewriter-text">Discover Your Next Great Read</h1>
+      <p class="reveal">Explore thousands of books across all genres and expand your horizons with our curated selections.</p>
+      <a href="books.html" class="btn btn-accent btn-large ripple reveal">Browse Books</a>
+    </div>
+  </header>
+
+  <!-- Main Content Wrapper -->
+  <main>
+    <!-- Featured Books -->
+    <section class="container reveal">
+      <div class="section-header">
+        <h2>Featured Books</h2>
+      </div>
+      <div class="horizontal-scroll-container" id="featured-books">
+        <!-- Will be populated by JS -->
+      </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="container reveal" style="background-color: var(--color-bg);">
+      <div class="section-header">
+        <h2>Top Categories</h2>
+      </div>
+      <div class="categories-grid">
+        <div class="category-card">
+          <div class="category-inner">
+            <div class="category-front">
+              <i class="fas fa-magic"></i>
+              <h3>Fantasy</h3>
+            </div>
+            <div class="category-back">
+              <h3>Fantasy</h3>
+              <p>Explore magical realms</p>
+              <br>
+              <a href="books.html" class="btn btn-outline" style="border-color: white; color: white;">View Books</a>
+            </div>
+          </div>
+        </div>
+        <div class="category-card">
+          <div class="category-inner">
+            <div class="category-front">
+              <i class="fas fa-brain"></i>
+              <h3>Self-Help</h3>
+            </div>
+            <div class="category-back">
+              <h3>Self-Help</h3>
+              <p>Improve your life</p>
+              <br>
+              <a href="books.html" class="btn btn-outline" style="border-color: white; color: white;">View Books</a>
+            </div>
+          </div>
+        </div>
+        <div class="category-card">
+          <div class="category-inner">
+            <div class="category-front">
+              <i class="fas fa-rocket"></i>
+              <h3>Sci-Fi</h3>
+            </div>
+            <div class="category-back">
+              <h3>Sci-Fi</h3>
+              <p>Journey to the future</p>
+              <br>
+              <a href="books.html" class="btn btn-outline" style="border-color: white; color: white;">View Books</a>
+            </div>
+          </div>
+        </div>
+        <div class="category-card">
+          <div class="category-inner">
+            <div class="category-front">
+              <i class="fas fa-heart"></i>
+              <h3>Romance</h3>
+            </div>
+            <div class="category-back">
+              <h3>Romance</h3>
+              <p>Fall in love with stories</p>
+              <br>
+              <a href="books.html" class="btn btn-outline" style="border-color: white; color: white;">View Books</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- New Arrivals -->
+    <section class="container reveal">
+      <div class="section-header">
+        <h2>New Arrivals</h2>
+      </div>
+      <div class="book-grid" id="new-arrivals">
+        <!-- Will be populated by JS -->
+      </div>
+      <div style="text-align: center; margin-top: 40px;">
+        <a href="books.html" class="btn btn-primary ripple">View All Books</a>
+      </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="newsletter-section reveal">
+      <div class="container">
+        <h2>Subscribe to Our Newsletter</h2>
+        <p>Get updates on new releases, special offers, and reading recommendations.</p>
+        <form class="newsletter-form">
+          <input type="email" placeholder="Enter your email address" required>
+          <button type="submit" class="btn btn-accent ripple">Subscribe</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h3>BookStore</h3>
+          <p>Your one-stop destination for all your reading needs. We provide quality books across multiple genres.</p>
+          <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="books.html">Catalog</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Customer Service</h3>
+          <ul>
+            <li><a href="#">My Account</a></li>
+            <li><a href="#">Order History</a></li>
+            <li><a href="#">Returns Policy</a></li>
+            <li><a href="#">FAQ</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Contact Us</h3>
+          <ul>
+            <li><i class="fas fa-map-marker-alt"></i> 123 Reading Lane, Book City, BC 12345</li>
+            <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
+            <li><i class="fas fa-envelope"></i> support@bookstore.com</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 BookStore. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/auth.js"></script>
+  <script src="js/books.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // Initialize Home Page specific logic
+    document.addEventListener('DOMContentLoaded', () => {
+      // Small timeout to ensure books.js loaded
+      setTimeout(() => {
+        if(typeof renderBookToGrid === 'function' && typeof booksDatabase !== 'undefined') {
+          // Render Featured
+          const featuredContainer = document.getElementById('featured-books');
+          if (featuredContainer) {
+            booksDatabase.slice(0, 5).forEach(book => {
+              const html = renderBookToGrid(book);
+              featuredContainer.innerHTML += html;
+            });
+          }
+          
+          // Render New Arrivals
+          const arrivalsContainer = document.getElementById('new-arrivals');
+          if (arrivalsContainer) {
+            booksDatabase.slice(5, 9).forEach(book => {
+              const html = renderBookToGrid(book);
+              arrivalsContainer.innerHTML += html;
+            });
+          }
+        }
+      }, 100);
+    });
+  </script>
+</body>
+</html>

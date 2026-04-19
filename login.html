@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - BookStore</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="login-body page-transition">
+
+  <!-- Animated Particles Background -->
+  <div class="floating-bg" id="particles">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+
+  <div class="auth-container">
+    
+    <!-- LOGIN FORM -->
+    <div id="login-form">
+      <div class="auth-header">
+        <h1>BookStore</h1>
+        <p>Welcome back! Please login to your account.</p>
+      </div>
+      
+      <form id="form-login" novalidate>
+        <div class="form-group" id="login-email-group">
+          <label for="login-email">Email Address</label>
+          <input type="email" id="login-email" class="form-control" placeholder="user@gmail.com" required>
+          <i class="fas fa-check-circle status-icon success-icon"></i>
+          <i class="fas fa-exclamation-circle status-icon error-icon"></i>
+          <div class="error-message">Must be a valid Gmail address</div>
+        </div>
+        
+        <div class="form-group" id="login-password-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" class="form-control" placeholder="Min 8 chars, 1 uppercase, 1 number" required>
+          <i class="fas fa-check-circle status-icon success-icon"></i>
+          <i class="fas fa-exclamation-circle status-icon error-icon"></i>
+          <div class="error-message">Invalid password.</div>
+        </div>
+        
+        <button type="submit" class="btn btn-accent auth-btn ripple" id="login-btn">
+          Sign In
+        </button>
+      </form>
+      
+      <div class="auth-toggle">
+        Don't have an account? <a id="show-register">Register</a>
+      </div>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div id="register-form">
+      <div class="auth-header">
+        <h1>Create Account</h1>
+        <p>Join our reading community today.</p>
+      </div>
+      
+      <form id="form-register" novalidate>
+        <div class="form-group" id="reg-name-group">
+          <label for="reg-name">Full Name</label>
+          <input type="text" id="reg-name" class="form-control" placeholder="John Doe" required>
+          <i class="fas fa-check-circle status-icon success-icon"></i>
+          <i class="fas fa-exclamation-circle status-icon error-icon"></i>
+          <div class="error-message">Name cannot be empty</div>
+        </div>
+
+        <div class="form-group" id="reg-email-group">
+          <label for="reg-email">Email Address</label>
+          <input type="email" id="reg-email" class="form-control" placeholder="user@gmail.com" required>
+          <i class="fas fa-check-circle status-icon success-icon"></i>
+          <i class="fas fa-exclamation-circle status-icon error-icon"></i>
+          <div class="error-message">Must be a valid Gmail address</div>
+        </div>
+        
+        <div class="form-group" id="reg-password-group">
+          <label for="reg-password">Password</label>
+          <input type="password" id="reg-password" class="form-control" placeholder="Min 8 chars, 1 uppercase, 1 number" required>
+          <i class="fas fa-check-circle status-icon success-icon"></i>
+          <i class="fas fa-exclamation-circle status-icon error-icon"></i>
+          <div class="error-message">Password must be at least 8 characters, include 1 uppercase and 1 number</div>
+        </div>
+        
+        <button type="submit" class="btn btn-accent auth-btn ripple" id="register-btn">
+          Sign Up
+        </button>
+      </form>
+      
+      <div class="auth-toggle">
+        Already have an account? <a id="show-login">Login</a>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart - BookStore</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .cart-page-container {
+      display: flex;
+      gap: 40px;
+      margin-top: 40px;
+    }
+    
+    .cart-items-section {
+      flex: 1;
+    }
+    
+    .cart-summary-section {
+      flex: 0 0 350px;
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      background: white;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .cart-item img {
+      width: 80px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 4px;
+      margin-right: 20px;
+    }
+
+    .cart-item-details {
+      flex: 1;
+    }
+
+    .cart-item-details h4 {
+      color: var(--color-primary);
+      margin-bottom: 5px;
+    }
+
+    .cart-item-details p {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+
+    .cart-item-price {
+      font-weight: bold;
+      color: var(--color-accent);
+    }
+
+    .cart-item-qty {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 20px;
+      background: var(--color-bg);
+      border-radius: 20px;
+      padding: 5px 10px;
+    }
+
+    .cart-item-qty button {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--color-primary);
+      width: 25px;
+      height: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+
+    .cart-item-qty button:hover {
+      background: #e0e0e0;
+    }
+
+    .cart-item-total {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: var(--color-primary);
+      min-width: 80px;
+      text-align: right;
+    }
+
+    .cart-item-remove {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: #ccc;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: color 0.3s ease;
+    }
+
+    .cart-item-remove:hover {
+      color: #e63946;
+    }
+
+    .summary-card {
+      background: white;
+      padding: 30px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 100px;
+    }
+
+    .summary-card h3 {
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      font-size: 1.1rem;
+    }
+
+    .summary-row.total {
+      border-top: 1px solid var(--color-border);
+      padding-top: 15px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: var(--color-primary);
+    }
+
+    .checkout-btn {
+      width: 100%;
+      margin-top: 20px;
+      padding: 15px;
+      font-size: 1.1rem;
+    }
+
+    .empty-cart-illustration {
+      text-align: center;
+      padding: 80px 20px;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .empty-cart-illustration i {
+      font-size: 5rem;
+      color: #ddd;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .cart-page-container {
+        flex-direction: column;
+      }
+      .cart-item {
+        flex-direction: column;
+        text-align: center;
+      }
+      .cart-item img {
+        margin: 0 0 15px 0;
+      }
+      .cart-item-qty {
+        margin: 15px 0;
+      }
+      .cart-item-remove {
+        top: 10px;
+        right: 10px;
+      }
+    }
+  </style>
+</head>
+<body class="page-transition">
+
+  <nav class="navbar scrolled" id="navbar">
+    <div class="container nav-container">
+      <div class="logo">
+        <i class="fas fa-book-open"></i> BookStore
+      </div>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="books.html">Books</a></li>
+        <li><a href="wishlist.html">Wishlist</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="nav-icons">
+        <div class="cart-icon-wrapper">
+          <a href="cart.html" class="active"><i class="fas fa-shopping-cart" style="color:var(--color-accent)"></i></a>
+          <span class="cart-badge" id="cart-count">0</span>
+        </div>
+        <div class="user-menu" id="user-menu">
+          <div class="user-avatar" id="avatar-initial">U</div>
+          <span class="user-name" id="navbar-user-name">User Name</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content container reveal">
+    <h1 style="margin-bottom: 30px; border-bottom: 2px solid var(--color-accent); padding-bottom:10px; display:inline-block;">Shopping Cart</h1>
+    
+    <div class="cart-page-container">
+      
+      <!-- Cart Items list -->
+      <div class="cart-items-section">
+        <div id="cart-items-container">
+           <!-- Populated by cart.js -->
+        </div>
+
+        <div id="cart-empty" class="empty-cart-illustration" style="display:none;">
+          <i class="fas fa-shopping-basket"></i>
+          <h2>Your cart is empty</h2>
+          <p style="margin:15px 0; color:#666;">Looks like you haven't added any books to your cart yet.</p>
+          <a href="books.html" class="btn btn-primary ripple">Continue Shopping</a>
+        </div>
+      </div>
+      
+      <!-- Summary Section -->
+      <div class="cart-summary-section" id="cart-summary" style="display:none;">
+        <div class="summary-card">
+          <h3>Order Summary</h3>
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span id="summary-subtotal">₹0</span>
+          </div>
+          <div class="summary-row">
+            <span>Discount (10% over ₹1000)</span>
+            <span id="summary-discount" style="color:#28a745;">₹0</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total</span>
+            <span id="summary-total">₹0</span>
+          </div>
+          <button class="btn btn-accent checkout-btn ripple" id="checkout-btn">
+            Proceed to Checkout
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="container footer-bottom">
+      <p>&copy; 2026 BookStore. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Small timeout to ensure cart.js logic is fully ready
+      setTimeout(() => {
+        if(typeof renderCartPage === 'function'){
+          renderCartPage();
+        }
+      }, 50);
+
+      const checkoutBtn = document.getElementById('checkout-btn');
+      if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', function() {
+          const originalText = this.innerHTML;
+          this.innerHTML = `Processing... <div class="spinner"></div>`;
+          this.disabled = true;
+
+          setTimeout(() => {
+            alert('Checkout successful! Thank you for your purchase.');
+            localStorage.removeItem('bookstore_cart'); // clear cart
+            window.location.href = 'index.html';
+          }, 2000);
+        });
+      }
+    });
+  </script>
+</body>
+</html>

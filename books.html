@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catalog - BookStore</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Catalog specific styles */
+    .catalog-header {
+      background-color: var(--color-primary);
+      color: white;
+      padding: 40px 0;
+      text-align: center;
+      margin-top: -80px;
+      padding-top: 120px;
+    }
+    
+    .catalog-container {
+      display: flex;
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    /* Sidebar Filters */
+    .sidebar {
+      flex: 0 0 250px;
+      padding: 20px;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-sm);
+      height: fit-content;
+      position: sticky;
+      top: 100px;
+    }
+
+    .filter-group {
+      margin-bottom: 25px;
+    }
+
+    .filter-group h4 {
+      margin-bottom: 15px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid var(--color-border);
+      color: var(--color-primary);
+    }
+
+    .filter-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    .filter-item input {
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    .price-slider-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .price-value {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    /* Main Content Area */
+    .main-catalog {
+      flex: 1;
+    }
+
+    .catalog-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      background: white;
+      padding: 15px 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: var(--color-bg);
+      border-radius: 20px;
+      padding: 5px 15px;
+      width: 300px;
+      border: 1px solid var(--color-border);
+    }
+
+    .search-bar input {
+      border: none;
+      background: transparent;
+      padding: 8px;
+      width: 100%;
+      outline: none;
+    }
+
+    .sort-control select {
+      padding: 8px 15px;
+      border-radius: 4px;
+      border: 1px solid var(--color-border);
+      outline: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .book-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 25px;
+    }
+
+    #no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 50px;
+      background: white;
+      border-radius: var(--border-radius);
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .catalog-container {
+        flex-direction: column;
+      }
+      .sidebar {
+        flex: none;
+        position: static;
+      }
+      .catalog-controls {
+        flex-direction: column;
+        gap: 15px;
+      }
+      .search-bar {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body class="page-transition">
+
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-container">
+      <div class="logo">
+        <i class="fas fa-book-open"></i> BookStore
+      </div>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="books.html" class="active">Books</a></li>
+        <li><a href="wishlist.html">Wishlist</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="nav-icons">
+        <div class="cart-icon-wrapper">
+          <a href="cart.html"><i class="fas fa-shopping-cart"></i></a>
+          <span class="cart-badge" id="cart-count">0</span>
+        </div>
+        <div class="user-menu" id="user-menu">
+          <div class="user-avatar" id="avatar-initial">U</div>
+          <span class="user-name" id="navbar-user-name">User Name</span>
+          <div class="dropdown-menu">
+            <button onclick="window.location.href='cart.html'"><i class="fas fa-shopping-bag"></i> My Orders</button>
+            <button id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+          </div>
+        </div>
+        <button class="menu-toggle" id="menu-toggle"><i class="fas fa-bars"></i></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="catalog-header">
+    <div class="container reveal">
+      <h1>Our Complete Collection</h1>
+      <p>Filter by genre, price, or rating to find your perfect book.</p>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="main-content container catalog-container">
+    
+    <!-- Sidebar Filters -->
+    <aside class="sidebar reveal">
+      <div class="filter-group">
+        <h4>Genre</h4>
+        <div id="genre-filters">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <h4>Price Range</h4>
+        <div class="price-slider-container">
+          <input type="range" id="price-slider" min="0" max="1000" value="1000" step="50">
+          <div class="price-value">
+            <span>₹0</span>
+            <span id="price-display">₹1000</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <h4>Rating</h4>
+        <div class="rating-filters">
+          <label class="filter-item"><input type="radio" name="rating-filter" value="0" checked> All Ratings</label>
+          <label class="filter-item"><input type="radio" name="rating-filter" value="4"> 4+ Stars</label>
+          <label class="filter-item"><input type="radio" name="rating-filter" value="5"> 5 Stars</label>
+        </div>
+      </div>
+      
+      <button class="btn btn-outline" style="width: 100%;" onclick="resetFilters()">Reset Filters</button>
+    </aside>
+
+    <!-- Catalog Main -->
+    <main class="main-catalog reveal">
+      
+      <div class="catalog-controls">
+        <div class="search-bar">
+          <i class="fas fa-search" style="color:#999"></i>
+          <input type="text" id="catalog-search" placeholder="Search by title or author...">
+        </div>
+        
+        <div class="sort-control">
+          <label for="catalog-sort">Sort by: </label>
+          <select id="catalog-sort">
+            <option value="default">Default</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="rating">Highest Rated</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="book-grid" id="catalog-grid">
+        <!-- Rendered by JS -->
+      </div>
+      <div id="no-results">
+        <h3><i class="fas fa-frown" style="color:var(--color-accent); font-size: 2rem; margin-bottom:10px;"></i><br>No books found</h3>
+        <p>Try adjusting your search or filters.</p>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h3>BookStore</h3>
+          <p>Your one-stop destination for all your reading needs. We provide quality books across multiple genres.</p>
+        </div>
+        <div class="footer-col">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="books.html">Catalog</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Contact Us</h3>
+          <ul>
+            <li><i class="fas fa-map-marker-alt"></i> 123 Reading Lane, City</li>
+            <li><i class="fas fa-envelope"></i> support@bookstore.com</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 BookStore. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/auth.js"></script>
+  <script src="js/books.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if(typeof booksDatabase !== 'undefined') {
+        initCatalog();
+      }
+    });
+
+    let currentBooks = [];
+    
+    // Filters state
+    let filters = {
+      search: '',
+      genres: [],
+      maxPrice: 1000,
+      minRating: 0,
+      sort: 'default'
+    };
+
+    function initCatalog() {
+      currentBooks = [...booksDatabase];
+      
+      // Extract unique genres
+      const genres = [...new Set(booksDatabase.map(b => b.genre))].sort();
+      const genreContainer = document.getElementById('genre-filters');
+      
+      genres.forEach(g => {
+        genreContainer.innerHTML += `
+          <label class="filter-item">
+            <input type="checkbox" value="${g}" class="genre-checkbox"> ${g}
+          </label>
+        `;
+      });
+
+      // Bind Search
+      document.getElementById('catalog-search').addEventListener('input', (e) => {
+        filters.search = e.target.value.toLowerCase();
+        applyFilters();
+      });
+
+      // Bind Genres
+      document.querySelectorAll('.genre-checkbox').forEach(cb => {
+        cb.addEventListener('change', () => {
+          filters.genres = Array.from(document.querySelectorAll('.genre-checkbox:checked')).map(c => c.value);
+          applyFilters();
+        });
+      });
+
+      // Bind Price
+      const priceSlider = document.getElementById('price-slider');
+      const priceDisplay = document.getElementById('price-display');
+      priceSlider.addEventListener('input', (e) => {
+        priceDisplay.textContent = '₹' + e.target.value;
+        filters.maxPrice = parseInt(e.target.value);
+        applyFilters();
+      });
+
+      // Bind Rating
+      document.querySelectorAll('input[name="rating-filter"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+          filters.minRating = parseInt(e.target.value);
+          applyFilters();
+        });
+      });
+
+      // Bind Sort
+      document.getElementById('catalog-sort').addEventListener('change', (e) => {
+        filters.sort = e.target.value;
+        applyFilters();
+      });
+
+      renderCatalog();
+    }
+
+    function applyFilters() {
+      // Filter base array
+      let result = booksDatabase.filter(book => {
+        const matchSearch = book.title.toLowerCase().includes(filters.search) || 
+                            book.author.toLowerCase().includes(filters.search);
+        const matchGenre = filters.genres.length === 0 || filters.genres.includes(book.genre);
+        const matchPrice = book.price <= filters.maxPrice;
+        const matchRating = book.rating >= filters.minRating;
+        
+        return matchSearch && matchGenre && matchPrice && matchRating;
+      });
+
+      // Sort array
+      switch(filters.sort) {
+        case 'price-low':
+          result.sort((a,b) => a.price - b.price);
+          break;
+        case 'price-high':
+          result.sort((a,b) => b.price - a.price);
+          break;
+        case 'rating':
+          result.sort((a,b) => b.rating - a.rating);
+          break;
+        default:
+          result.sort((a,b) => a.id - b.id);
+          break;
+      }
+
+      currentBooks = result;
+      renderCatalog();
+    }
+
+    function renderCatalog() {
+      const grid = document.getElementById('catalog-grid');
+      const noResults = document.getElementById('no-results');
+      
+      grid.innerHTML = '';
+      
+      if(currentBooks.length === 0) {
+        noResults.style.display = 'block';
+      } else {
+        noResults.style.display = 'none';
+        currentBooks.forEach(book => {
+          grid.innerHTML += renderBookToGrid(book);
+        });
+      }
+    }
+
+    function resetFilters() {
+      document.getElementById('catalog-search').value = '';
+      document.getElementById('price-slider').value = 1000;
+      document.getElementById('price-display').textContent = '₹1000';
+      document.getElementById('catalog-sort').value = 'default';
+      
+      document.querySelectorAll('.genre-checkbox').forEach(cb => cb.checked = false);
+      document.querySelector('input[name="rating-filter"][value="0"]').checked = true;
+
+      filters = {
+        search: '',
+        genres: [],
+        maxPrice: 1000,
+        minRating: 0,
+        sort: 'default'
+      };
+      
+      applyFilters();
+    }
+  </script>
+</body>
+</html>
